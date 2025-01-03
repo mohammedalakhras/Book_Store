@@ -1,0 +1,19 @@
+{
+  "name": "book-store-api",
+  "version": "1.0.0",
+  "description": "Book Store API ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "author": "Mohammed Alakhras",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "joi": "^17.13.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
