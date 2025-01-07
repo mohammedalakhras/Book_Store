@@ -3,7 +3,7 @@ const { object } = require("joi");
 
 const router = express.Router();
 const Joi = require("joi");
-
+const { Author } = require("../models/Author");
 const authors = [
   {
     id: 1,
@@ -62,21 +62,22 @@ router.get("/:id", (req, res) => {
  *@access public
  */
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { err } = CheckInsertAuthor(req.body);
   if (err) {
     res.status(400).json({ message: err.details[0].message });
   } else {
   }
-  const auth = {
+  const auth = new Author({
     id: authors.length + 1,
     firstname: req.body.firstname,
     lastnamme: req.body.lastnamme,
     nationality: req.body.nationality,
     image: req.body.image,
-  };
-  authors.push(auth);
-  res.status(201).json(auth);
+  });
+  const result =await auth.save();
+
+  res.status(201).json(result);
 });
 
 /**
