@@ -14,8 +14,10 @@ The Book Store API is a RESTful API developed using Express.js and Node.js. It a
 ## Technologies Used
 - [Node.js](https://nodejs.org/) - JavaScript runtime for building server-side applications.
 - [Express.js](https://expressjs.com/) - Web framework for Node.js to build APIs.
-- [MongoDB](https://www.mongodb.com/) (optional) - NoSQL database for storing book data (if used).
-- [Mongoose](https://mongoosejs.com/) (optional) - ODM library for MongoDB and Node.js (if used).
+- [MongoDB](https://www.mongodb.com/) - NoSQL database for storing book data (if used).
+- [Mongoose](https://mongoosejs.com/)  - ODM library for MongoDB and Node.js (if used).
+- [express-async-handler](https://github.com/Abazhenov/express-async-handler) - Simplifies error handling for async routes in Express.
+- [Joi](https://joi.dev/) - Powerful schema description language and data validator for JavaScript.
 
 ## Getting Started
 
@@ -80,14 +82,12 @@ The API will be available at [http://localhost:3000](http://localhost:3000) (or 
 ### Usage Example
 To create a new book entry, send a POST request to `/api/books` with the following JSON body:
 ```
-{  
-id: 1,
-
-author: "Chinua Achebe",
-
-country: "Nigeria",
-
-year: 1958,  
+{
+      "title": "Java 4 Every Body",
+      "author": "677d8d13c8ac26554870da06",
+      "description":"Java Tutorial",
+      "price": 10,
+      "cover": "Hard Cover"
 }
 ```
 

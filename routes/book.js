@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const Joi = require("joi");
+const {
+  ValidateCreateBook,
+  ValidateUpdateBook,
+  Book,
+} = require("../models/Book");
+const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 
 const books = [
   {
@@ -28,21 +34,32 @@ const books = [
 //   });
 
 //        ALL Books
-router.get("/", (req, res) => {
-  res.json(books);
-});
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const books = await Book.find().populate("author");
+    res.status(200).json(books);
+  })
+);
 
 // Specific Book
 
-router.get("/:iden", (req, res) => {
-  const book = books.find((b) => b.id === parseInt(req.params.iden));
+router.get(
+  "/:iden",
+  asyncHandler(async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.iden)) {
+      res.status(400).json({ msg: "Invalid ID Format" });
+    }
 
-  if (book) {
-    res.status(200).json(book);
-  } else {
-    res.status(404).json({ msg: "not found" });
-  }
-});
+    const book = await Book.findById(req.params.iden).populate("Author");
+
+    if (book) {
+      res.status(200).json(book);
+    } else {
+      res.status(404).json({ msg: "not found" });
+    }
+  })
+);
 
 //   router.POST
 // use mmiddleware
@@ -50,45 +67,63 @@ router.get("/:iden", (req, res) => {
 
 // USE JOI
 
-router.post("/", (req, res) => {
-  console.log(req.body);
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { error } = ValidateCreateBook(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
 
-  const { error } = ValidateCreateBook(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      description: req.body.description,
+      price: req.body.price,
+      cover: req.body.cover,
+    });
+    console.log("Book is :", book);
 
-  const book = {
-    id: books.length + 1,
-    author: req.body.author,
-    country: req.body.country,
-    title: req.body.title,
-    year: req.body.year,
-  };
-  console.log("Book is :", book);
+    const result = await book.save();
 
-  books.push(book);
+    res.status(201).json(result);
+  })
+);
 
-  res.status(201).json(book);
-});
+router.put(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).json({ msg: "Invalid ID Format" });
+    }
 
-router.put("/:id", (req, res) => {
-  const { error } = ValidateUpdateBook(req.body);
+    const { error } = ValidateUpdateBook(req.body);
 
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
 
-  const book = books.find((b) => b.id === parseInt(req.params.id));
+    const book = await Book.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          title: req.body.title,
+          author: req.body.author,
+          description: req.body.description,
+          price: req.body.price,
+          cover: req.body.cover,
+        },
+      },
+      { new: true }
+    );
 
-  if (book) {
-    res.status(200).json({ message: "Updated " });
-    
-  } else {
-    res.status(404).json({ message: "Not Found " });
-  }
-});
-
+    if (book) {
+      res.status(200).json({ message: "Updated " });
+    } else {
+      res.status(404).json({ message: "Not Found " });
+    }
+  })
+);
 
 /**
  *@description delete author
@@ -96,32 +131,18 @@ router.put("/:id", (req, res) => {
  *@method delete
  *@access public
  */
- router.delete("/:id", (req, res) => {
-  const book = books.find((b) => b.id === parseInt(req.params.id));
-  if (book) {
-    res.status(200).json({ msg: "Deleted" });
-  } else {
-    res.status(400).json({ mgs: "not found" });
-  }
-});
+router.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const book = await Book.findById(req.params.id);
+    if (book) {
+      const Deletedbook = await Book.findByIdAndDelete(req.params.id);
 
-function ValidateCreateBook(obj) {
-  const schema = Joi.object({
-    author: Joi.string().min(3).max(50).required(),
-    country: Joi.string().min(3).max(20).required(),
-    title: Joi.string().trim().min(3).max(20).required(),
-    year: Joi.number().min(1900).max(new Date().getFullYear()).required(),
-  });
-  return schema.validate(obj);
-}
+      res.status(200).json({ msg: "Deleted" });
+    } else {
+      res.status(400).json({ mgs: "not found" });
+    }
+  })
+);
 
-function ValidateUpdateBook(obj) {
-  const schema = Joi.object({
-    author: Joi.string().min(3).max(50),
-    country: Joi.string().min(3).max(20),
-    title: Joi.string().trim().min(3).max(20),
-    year: Joi.number().min(1900).max(new Date().getFullYear()),
-  });
-  return schema.validate(obj);
-}
 module.exports = router;
