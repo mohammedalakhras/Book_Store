@@ -10,6 +10,8 @@ The Book Store API is a RESTful API developed using Express.js and Node.js. It a
 - Update book information
 - Delete books from the collection
 - Simple and intuitive RESTful endpoints
+- User accounts with login/register
+- JWT authentication for secure access
 
 ## Technologies Used
 - [Node.js](https://nodejs.org/) - JavaScript runtime for building server-side applications.
@@ -18,6 +20,7 @@ The Book Store API is a RESTful API developed using Express.js and Node.js. It a
 - [Mongoose](https://mongoosejs.com/)  - ODM library for MongoDB and Node.js (if used).
 - [express-async-handler](https://github.com/Abazhenov/express-async-handler) - Simplifies error handling for async routes in Express.
 - [Joi](https://joi.dev/) - Powerful schema description language and data validator for JavaScript.
+- [JSON Web Token](https://github.com/auth0/node-jsonwebtoken) - Library to sign and verify JSON Web Tokens (JWT).
 
 ## Getting Started
 

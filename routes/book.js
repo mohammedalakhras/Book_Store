@@ -8,27 +8,7 @@ const {
 const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 
-const books = [
-  {
-    id: 1,
-    author: "Chinua Achebe",
-    country: "Nigeria",
-    year: 1958,
-  },
-  {
-    id: 2,
-    author: "Hans Christian Andersen",
-    country: "Denmark",
-    year: 1836,
-  },
-  {
-    id: 3,
-    author: "Dante Alighieri",
-    country: "Italy",
-    title: "The Divine Comedy",
-    year: 1315,
-  },
-];
+
 //   router.get("/", (req, res) => {
 //     res.send("Hello Mohammed");
 //   });
@@ -47,11 +27,11 @@ router.get(
 router.get(
   "/:iden",
   asyncHandler(async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.iden)) {
-      res.status(400).json({ msg: "Invalid ID Format" });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(req.params.iden)) {
+    //   res.status(400).json({ msg: "Invalid ID Format" });
+    // }
 
-    const book = await Book.findById(req.params.iden).populate("Author");
+    const book = await Book.findById(req.params.iden).populate("author");
 
     if (book) {
       res.status(200).json(book);
@@ -93,9 +73,9 @@ router.post(
 router.put(
   "/:id",
   asyncHandler(async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      res.status(400).json({ msg: "Invalid ID Format" });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    //   res.status(400).json({ msg: "Invalid ID Format" });
+    // }
 
     const { error } = ValidateUpdateBook(req.body);
 

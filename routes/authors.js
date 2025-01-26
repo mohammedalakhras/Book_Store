@@ -38,9 +38,9 @@ router.get(
  
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid ID format" });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //   return res.status(400).json({ message: "Invalid ID format" });
+    // }
 
     const auth = await Author.findById(id);
 
@@ -105,9 +105,9 @@ router.put(
     // }
 
     const {id}=req.params;
-    if(!mongoose.Types.ObjectId.isValid(id)){
-      res.status(400).json({ message: "Invalid ID format" });
-    }
+    // if(!mongoose.Types.ObjectId.isValid(id)){
+    //   res.status(400).json({ message: "Invalid ID format" });
+    // }
     const author = await Author.findByIdAndUpdate(
       req.params.id,
       {
@@ -134,9 +134,9 @@ router.put(
 router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
-    if(!mongoose.Types.ObjectId.isValid(id)){
-      res.status(400).json({ message: "Invalid ID format" });
-    }
+    // if(!mongoose.Types.ObjectId.isValid(id)){
+    //   res.status(400).json({ message: "Invalid ID format" });
+    // }
     
     const author = await Author.findById(req.params.id);
 
