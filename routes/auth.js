@@ -2,12 +2,12 @@ const experss = require("express");
 const router = experss.Router();
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
-const jwt=require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
 const {
   User,
-  VaildateLoginUser,
-  VaildateRegisterUser,
+  validateLoginUser,
+  validateRegisterUser,
 } = require("../models/User");
 
 /**
@@ -19,7 +19,7 @@ const {
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
-    const { error } = VaildateRegisterUser(req.body);
+    const { error } = validateRegisterUser(req.body);
     if (error) {
       return res.status(400).json({ msg: error.details[0].message });
     }
@@ -32,24 +32,27 @@ router.post(
 
     const salt = await bcrypt.genSalt(10);
     req.body.password = await bcrypt.hash(req.body.password, salt);
+
     user = new User({
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
-      isAdmin: req.body.isAdmin,
+  
     });
 
     const result = await user.save();
 
     //generaye Token
-    const token = jwt.sign({id:user._id,username:user.username},process.env.JWT_Secrete_Key,{expiresIn:'4d'});
-    const {password,...other}=result._doc;
+    const token = jwt.sign(
+      { id: result._id, username: result.username ,isAdmin:result.isAdmin},
+      process.env.JWT_Secrete_Key,
+      { expiresIn: "4d" }
+    );
+    const { password, ...other } = result._doc;
 
-    res.status(201).json({...other,token});
+    res.status(201).json({ ...other, token });
   })
 );
-
-
 
 /**
  *@description User Login
@@ -57,34 +60,36 @@ router.post(
  *@method POST
  *@access public
  */
- router.post(
-    "/login",
-    asyncHandler(async (req, res) => {
-      const { error } = VaildateLoginUser(req.body);
-      if (error) {
-        return res.status(400).json({ msg: error.details[0].message });
-      }
-  
-      let user = await User.findOne({ email: req.body.email });
-  
-      if (!user) {
-        return res.status(400).json({ msg: "Invalid Email or Password" });
-      }
-  
-     
-      const isPassMatch=await bcrypt.compare(req.body.password,user.password);
+router.post(
+  "/login",
+  asyncHandler(async (req, res) => {
+    const { error } = validateLoginUser(req.body);
+    if (error) {
+      return res.status(400).json({ msg: error.details[0].message });
+    }
 
-      if(!isPassMatch){
-        return res.status(400).json({mgs:'Invalid Email or Password'})
-      }
-      //generate Token
-      const token = jwt.sign({id:user._id,username:user.username},process.env.JWT_Secrete_Key,{expiresIn:'4d'});
+    let user = await User.findOne({ email: req.body.email });
 
-      const {password,...other}=user._doc;
-  
-      res.status(200).json({...other,token});
-    })
-  );
-  
+    if (!user) {
+      return res.status(400).json({ msg: "Invalid Email or Password" });
+    }
+
+    const isPassMatch = await bcrypt.compare(req.body.password, user.password);
+
+    if (!isPassMatch) {
+      return res.status(400).json({ mgs: "Invalid Email or Password" });
+    }
+    //generate Token
+    const token = jwt.sign(
+      { id: user._id, username: user.username ,isAdmin:user.isAdmin},
+      process.env.JWT_Secrete_Key,
+      { expiresIn: "4d" }
+    );
+
+    const { password, ...other } = user._doc;
+
+    res.status(200).json({ ...other, token });
+  })
+);
 
 module.exports = router;

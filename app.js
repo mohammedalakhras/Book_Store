@@ -1,15 +1,14 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 
+//Routes
 const authors = require("./routes/authors");
 const bookPath = require("./routes/book");
-
 const UserPath =require('./routes/users')
 const AuthPath =require('./routes/auth')
 
-
-
-const mongoose = require("mongoose");
+//Middlewares
 
 const { Logger } = require("./middlewares/Logger");
 const { errorHandler, notFound } = require("./middlewares/Errors");
@@ -28,6 +27,8 @@ mongoose
 // app.post()
 // app.put();
 // app.delete();
+
+
 app.use(express.json());
 
 app.use(Logger);

@@ -82,8 +82,17 @@ The API will be available at [http://localhost:3000](http://localhost:3000) (or 
 | PUT    | `/api/authors/:id`     | Update a specific author by ID     |
 | DELETE | `/api/authors/:id`     | Delete a specific author by ID     |
 
+
+| Method | Endpoint             | Description                                   |
+|--------|----------------------|-----------------------------------------------|
+| PUT    | /api/users/:id       | Update a specific user by ID (Requires Token) |
+| GET    | /api/users           | Retrieve all user accounts (Admin only)       |
+| POST   | /api/auth/register   | Register a new account                        |
+| POST   | /api/auth/login      | Log in to an account                          |
+
+
 ### Usage Example
-To create a new book entry, send a POST request to `/api/books` with the following JSON body:
+- To create a new book entry, send a POST request to `/api/books` with the following JSON body:
 ```
 {
       "title": "Java 4 Every Body",
@@ -94,6 +103,30 @@ To create a new book entry, send a POST request to `/api/books` with the followi
 }
 ```
 
+- To register a new account `/api/auth/register`
+```json
+{
+  "email": "Mohammed@gmail.com",
+  "username": "mohammed",
+  "password": "Abc@012345"
+}
+```
+- To log in to an account `/api/auth/login`
+
+```json
+{
+  "email": "mohammed@gmail.com",
+  "password": "Abc@012345"
+}
+```
+
+## Documentation
+
+For complete API documentation, please refer to the following Postman collection:
+
+[API Documentation](https://documenter.getpostman.com/view/22540031/2sAYQiB7xe#c5d035ae-81e1-4486-bc43-f7f5836e8578)
+
+This documentation provides detailed information on all available endpoints, request/response formats, and example use cases.
 
 ## Contributing
 Contributions are welcome! If you find any bugs or have suggestions for enhancements, please open an issue or submit a pull request.

@@ -4,7 +4,11 @@ const router = experss.Router();
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { validateUpdatedUser, User } = require("../models/User");
-const { verifyToken } = require("../middlewares/verifyToken");
+const {
+  verifyToken,
+  verifyTokenAndAuth,
+  verifyTokenAndAdmin,
+} = require("../middlewares/verifyToken");
 
 /**
  *@description Update user
@@ -13,19 +17,10 @@ const { verifyToken } = require("../middlewares/verifyToken");
  *@access private
  */
 
-// router.put(
-//   "/:id",
-//   asyncHandler(async (req, res) => {
-//
-// );
-
 router.put(
   "/:id",
-  verifyToken,
+  verifyTokenAndAuth,
   asyncHandler(async (req, res) => {
-    if (req.body.id != req.user.id) {
-      res.status(403).json({ msg: "Unauthorized" });
-    }
     const { err } = validateUpdatedUser(req.body);
     if (err) {
       return res.status(400).json({ message: err.details[0].message });
@@ -35,7 +30,7 @@ router.put(
 
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(req.body.password, slat);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -48,9 +43,67 @@ router.put(
         },
       },
       { new: true }
-    );
+    ).select("-password");
 
-    res.status(200).json({ updatedUser });
+    return res.status(200).json(updatedUser);
   })
 );
+
+/**
+ *@description get All Users
+ *@route /api/users/
+ *@method GET
+ *@access private (only admin)
+ */
+
+router.get(
+  "/",
+  verifyTokenAndAdmin,
+  asyncHandler(async (req, res) => {
+    const users = await User.find().select("-password");
+    return res.status(200).json(users);
+  })
+);
+
+/**
+ *@description get User by ID
+ *@route /api/users/:id
+ *@method GET
+ *@access private (only admin and user himself)
+ */
+
+router.get(
+  "/:id",
+  verifyTokenAndAuth,
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id).select("-password");
+    if(user)
+    return res.status(200).json(user);
+  else
+  return res.status(404).json({msg:'User Not Found'});
+  })
+);
+
+/**
+ *@description delete User by ID
+ *@route /api/users/:id
+ *@method DELETE
+ *@access private (only admin and user himself)
+ */
+
+ router.delete(
+  "/:id",
+  verifyTokenAndAuth,
+  asyncHandler(async (req, res) => {
+    const user = await User.findByIdAndDelete(req.params.id)
+    if(user)
+    return res.status(200).json({msg:'User Deleted'});
+  else
+  return res.status(404).json({msg:'User Not Found'});
+  })
+);
+
+
+
+
 module.exports = router;
