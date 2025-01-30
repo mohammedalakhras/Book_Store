@@ -7,7 +7,7 @@ const {
 } = require("../models/Book");
 const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
-
+const { verifyTokenAndAdmin } = require("../middlewares/verifyToken");
 
 //   router.get("/", (req, res) => {
 //     res.send("Hello Mohammed");
@@ -47,8 +47,16 @@ router.get(
 
 // USE JOI
 
+/**
+ * @description Create a new book
+ * @route /api/books/
+ * @method POST
+ * @access private (Admin Only)
+ */
+
 router.post(
   "/",
+  verifyTokenAndAdmin,
   asyncHandler(async (req, res) => {
     const { error } = ValidateCreateBook(req.body);
     if (error) {
@@ -70,8 +78,16 @@ router.post(
   })
 );
 
+/**
+ * @description Update a book
+ * @route /api/books/:id
+ * @method PUT
+ * @access private (Admin Only)
+ */
+
 router.put(
   "/:id",
+  verifyTokenAndAdmin,
   asyncHandler(async (req, res) => {
     // if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     //   res.status(400).json({ msg: "Invalid ID Format" });
@@ -106,10 +122,10 @@ router.put(
 );
 
 /**
- *@description delete author
+ *@description delete book
  *@route /api/books/:id
  *@method delete
- *@access public
+ *@access private (Admin Only)
  */
 router.delete(
   "/:id",

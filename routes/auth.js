@@ -2,7 +2,7 @@ const experss = require("express");
 const router = experss.Router();
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+
 
 const {
   User,
@@ -43,11 +43,7 @@ router.post(
     const result = await user.save();
 
     //generaye Token
-    const token = jwt.sign(
-      { id: result._id, username: result.username ,isAdmin:result.isAdmin},
-      process.env.JWT_Secrete_Key,
-      { expiresIn: "4d" }
-    );
+    const token = result.generateToken()
     const { password, ...other } = result._doc;
 
     res.status(201).json({ ...other, token });
@@ -80,11 +76,7 @@ router.post(
       return res.status(400).json({ mgs: "Invalid Email or Password" });
     }
     //generate Token
-    const token = jwt.sign(
-      { id: user._id, username: user.username ,isAdmin:user.isAdmin},
-      process.env.JWT_Secrete_Key,
-      { expiresIn: "4d" }
-    );
+    const token = user.generateToken()
 
     const { password, ...other } = user._doc;
 

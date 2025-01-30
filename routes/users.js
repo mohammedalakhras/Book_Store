@@ -5,7 +5,6 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { validateUpdatedUser, User } = require("../models/User");
 const {
-  verifyToken,
   verifyTokenAndAuth,
   verifyTokenAndAdmin,
 } = require("../middlewares/verifyToken");

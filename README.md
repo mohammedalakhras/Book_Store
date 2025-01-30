@@ -65,22 +65,22 @@ The API will be available at [http://localhost:3000](http://localhost:3000) (or 
 
 ### API Endpoints
 
-| Method | Endpoint             | Description                       |
-|--------|----------------------|-----------------------------------|
-| GET    | `/api/books`         | Retrieve all books               |
-| POST   | `/api/books`         | Create a new book                |
-| GET    | `/api/books/:id`     | Retrieve a specific book by ID   |
-| PUT    | `/api/books/:id`     | Update a specific book by ID     |
-| DELETE | `/api/books/:id`     | Delete a specific book by ID     |
+| Method | Endpoint             | Description                                   |
+|--------|----------------------|-----------------------------------------------|
+| GET    | `/api/books`         | Retrieve all books                            |
+| GET    | `/api/books/:id`     | Retrieve a specific book by ID                |
+| POST   | `/api/books`         | Create a new book                             |
+| PUT    | `/api/books/:id`     | Update a specific book by ID                  |
+| DELETE | `/api/books/:id`     | Delete a specific book by ID                  |
 
 
-| Method | Endpoint             | Description                       |
-|--------|----------------------|-----------------------------------|
-| GET    | `/api/authors`         | Retrieve all authors               |
-| POST   | `/api/authors`         | Create a new author                |
-| GET    | `/api/authors/:id`     | Retrieve a specific author by ID   |
-| PUT    | `/api/authors/:id`     | Update a specific author by ID     |
-| DELETE | `/api/authors/:id`     | Delete a specific author by ID     |
+| Method | Endpoint               | Description                                 |
+|--------|------------------------|---------------------------------------------|
+| GET    | `/api/authors`         | Retrieve all authors                        |
+| GET    | `/api/authors/:id`     | Retrieve a specific author by ID            |
+| POST   | `/api/authors`         | Create a new author  (Admin Only)           |
+| PUT    | `/api/authors/:id`     | Update a specific author by ID (Admin Only) |
+| DELETE | `/api/authors/:id`     | Delete a specific author by ID (Admin Only) |
 
 
 | Method | Endpoint             | Description                                   |

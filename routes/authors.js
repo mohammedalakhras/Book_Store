@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 const {
   Author,
   CheckInsertAuthor,
@@ -9,6 +9,7 @@ const {
 } = require("../models/Author");
 
 const asyncHandler = require("express-async-handler");
+const { verifyTokenAndAdmin } = require("../middlewares/verifyToken");
 
 /**
  *@description get all authors
@@ -35,7 +36,6 @@ router.get(
 router.get(
   "/:id",
   asyncHandler(async (req, res) => {
- 
     const { id } = req.params;
 
     // if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -53,14 +53,15 @@ router.get(
 );
 
 /**
- *@description get specific author by id
+ *@description Create New Author
  *@route /api/authors
  *@method POST
- *@access public
+ *@access private (admin only)
  */
 
 router.post(
   "/",
+  verifyTokenAndAdmin,
   asyncHandler(async (req, res) => {
     const { err } = CheckInsertAuthor(req.body);
     if (err) {
@@ -83,12 +84,12 @@ router.post(
  *@description Update Author
  *@route /api/authors
  *@method PUT
- *@access public
+ *@access private (Admin Only)
  */
 
 router.put(
   "/:id",
-
+  verifyTokenAndAdmin,
   asyncHandler(async (req, res) => {
     const { err } = CheckUpdatetAuthor(req.body);
 
@@ -104,7 +105,7 @@ router.put(
     //   res.status(404).json({ message: "Not Found " });
     // }
 
-    const {id}=req.params;
+    const { id } = req.params;
     // if(!mongoose.Types.ObjectId.isValid(id)){
     //   res.status(400).json({ message: "Invalid ID format" });
     // }
@@ -128,16 +129,17 @@ router.put(
 /**
  *@description delete author
  *@route /api/authors/:id
- *@method delete
- *@access public
+ *@method DELETE
+ *@access private (Admin Only)
  */
 router.delete(
   "/:id",
+  verifyTokenAndAdmin,
   asyncHandler(async (req, res) => {
     // if(!mongoose.Types.ObjectId.isValid(id)){
     //   res.status(400).json({ message: "Invalid ID format" });
     // }
-    
+
     const author = await Author.findById(req.params.id);
 
     if (author) {
